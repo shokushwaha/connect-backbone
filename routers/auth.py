@@ -23,3 +23,12 @@ def login(user_credentials: OAuth2PasswordRequestForm = Depends(), db: Session =
     access_token = oauth2.create_access_token(data={"user_id": user.id})
 
     return {"access_token": access_token, "token_type": "bearer"}
+
+
+@router.post('/logout')
+def logout(db: Session = Depends(database.get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
+   
+    current_user.is_active = False
+    db.commit()
+    
+    return {"message": "You have been logged out"}
